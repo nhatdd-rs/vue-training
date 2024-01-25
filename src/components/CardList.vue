@@ -7,11 +7,10 @@ const props = defineProps({
     level: Number
 })
 
-const emit = defineEmits(['return-home'])
+const emit = defineEmits(['return-home', 'finish-game'])
 
 const isFlipped = ref([])
 const isFlipping = ref([])
-const isFinished = ref(false)
 
 const flipCard = (id) => {
     if (isFlipping.value.length >= 2 || isFlipping.value.indexOf(id) >= 0) {
@@ -33,7 +32,7 @@ const compareCards = () => {
             isFlipped.value.push(isFlipping.value[1])
 
             if (isFlipped.value.length === props.cardList.length) {
-                isFinished.value = true;
+                emit('finish-game')
             }
         }
 
@@ -61,7 +60,6 @@ const getCardId = (index, cardIndex, card) => {
 
 <template>
     <div class="heading">
-        <h1 v-if="isFinished">Congratulations</h1>
         <a href="#" @click="emit('return-home')" class="btn btn-primary">Back</a>
     </div>
     <div :class="`card-list level-${props.level}`">
