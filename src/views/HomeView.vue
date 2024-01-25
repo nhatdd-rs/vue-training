@@ -1,8 +1,10 @@
 <script setup>
+import { ref } from 'vue';
 import CardList from '@/components/CardList.vue';
 import SelectMode from '@/components/SelectMode.vue';
-import { ref } from 'vue';
+import GameFinished from '@/components/GameFinished.vue';
 
+const isFinished = ref(false)
 const selectedLevel = ref(0)
 const cardList = ref([])
 
@@ -25,12 +27,23 @@ const selectedMode = (level) => {
   cardList.value.push(...cardList.value)
   cardList.value = shuffle(cardList.value)
 }
+
+const onFinishGame = () => {
+  isFinished.value = true
+}
+
+const reset = () => {
+  selectedLevel.value = 0
+  isFinished.value = false
+}
 </script>
 
 <template>
   <main>
     <SelectMode v-if="!selectedLevel" @selected-mode="selectedMode" />
-    <CardList @return-home="() => { selectedLevel = 0 }" v-else :cardList="cardList" :level="selectedLevel" />
+    <CardList v-if="!isFinished && selectedLevel" @finish-game="onFinishGame" @return-home="reset" :cardList="cardList"
+      :level="selectedLevel" />
+    <GameFinished v-if="isFinished" @return-home="reset" />
   </main>
 </template>
 
